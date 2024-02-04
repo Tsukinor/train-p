@@ -1,8 +1,8 @@
-package com.jiawa.train;
+package com.jiawa.train.number.config;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author liushuailong
@@ -11,8 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class TrainApplication {
+@ComponentScan("com.jiawa")
+public class MemberApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TrainApplication.class);
+        SpringApplication.run(MemberApplication.class);
     }
 }

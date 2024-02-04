@@ -1,4 +1,4 @@
-package com.jiawa.train;
+package com.jiawa.train.number.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +9,6 @@ public class TestController {
 
     @GetMapping("/hello")
     public String hello(){
-        return "hello word2024";
+        return "hello word2023";
     }
 }
