@@ -1,4 +1,4 @@
-package com.jiawa.train.number.aspect;
+package com.jiawa.train.common.aspect;
 
 
 import com.alibaba.fastjson.JSONObject;
