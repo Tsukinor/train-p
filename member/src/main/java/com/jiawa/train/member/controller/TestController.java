@@ -1,4 +1,4 @@
-package com.jiawa.train.number.controller;
+package com.jiawa.train.member.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
