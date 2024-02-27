@@ -1,14 +1,18 @@
 package com.jiawa.train.member.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Member;
 import com.jiawa.train.member.domain.MemberExample;
 import com.jiawa.train.member.mapper.MemberMapper;
+import com.jiawa.train.member.req.MemberLoginReq;
 import com.jiawa.train.member.req.MemberRegisterReq;
 import com.jiawa.train.member.req.MemberSendCodeReq;
+import com.jiawa.train.member.resp.MemberLoginResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +33,9 @@ public class MemberService {
 
     public long register(MemberRegisterReq req){
         String mobile = req.getMobile();
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-        List<Member> list = memberMapper.selectByExample(memberExample);
+        Member memberDB = selectByMobile(mobile);
 
-        if (CollUtil.isNotEmpty(list)){
+        if (ObjectUtil.isNull(memberDB)){
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
@@ -47,11 +49,9 @@ public class MemberService {
 
     public void sendCode(MemberSendCodeReq req){
         String mobile = req.getMobile();
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-        List<Member> list = memberMapper.selectByExample(memberExample);
+        Member memberDB = selectByMobile(mobile);
         //如果手机号不存在，则插入一条记录
-        if (CollUtil.isEmpty(list)){
+        if (ObjectUtil.isNull(memberDB)){
             Log.info("手机号不存在，插入一条记录");
             Member member = new Member();
             member.setId(SnowUtil.getSnowflakeNextId());
@@ -74,5 +74,33 @@ public class MemberService {
 
 
 
+    }
+
+    public MemberLoginResp login(MemberLoginReq req){
+        String mobile = req.getMobile();
+        String code = req.getCode();
+
+        Member memberDB = selectByMobile(mobile);
+
+        if (ObjectUtil.isNull(memberDB)){
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_NOT_EXIST);
+        }
+        //校验短信验证码
+        if(!"8888".equals(code)){
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_CODE_ERROR);
+        }
+
+        return BeanUtil.copyProperties(memberDB,MemberLoginResp.class);
+
+    }
+
+    private Member selectByMobile(String mobile) {
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andMobileEqualTo(mobile);
+        List<Member> list = memberMapper.selectByExample(memberExample);
+        if (CollUtil.isEmpty(list)){
+            return null;
+        }
+        return list.get(0);
     }
 }
