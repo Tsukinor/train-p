@@ -45,6 +45,7 @@ import { useRouter } from 'vue-router'
 import store from "@/store";
 
 export default defineComponent({
+
   name: "login-view",
   setup() {
     const router = useRouter();
