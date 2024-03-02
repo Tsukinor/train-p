@@ -4,7 +4,6 @@ Content-Type: application/json
 token:{{token}}
 
     {
-      "memberId" : "12222",
       "name" : "8888",
       "idCard" : "123321",
       "type" : "1"
