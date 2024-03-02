@@ -12,7 +12,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-public class LoginMemberFilter implements GlobalFilter, Ordered {
+public class LoginMemberFilter implements Ordered ,GlobalFilter{
     private static final Logger Log = LoggerFactory.getLogger(LoginMemberFilter.class);
 
     @Override
