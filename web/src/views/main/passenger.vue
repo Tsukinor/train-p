@@ -10,6 +10,7 @@
            :pagination="pagination"
            @change="handleTableChange"
            :loading="loading">
+    <!--自定义列，bodyCell属性：{列名，每行的数据}-->
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
         <a-space>
@@ -31,7 +32,7 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="乘车人" @ok="handleOk"
+  <a-modal v-model:visible="visible" title="新增乘客" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form :model="passenger" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="姓名">
@@ -59,6 +60,7 @@ import axios from "axios";
 export default defineComponent({
   name: "PassengerView",
   setup() {
+    // 在main.js中import相应的js资源文件后可通过window.属性名读取
     const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
     const visible = ref(false);
     let passenger = ref({
@@ -73,8 +75,11 @@ export default defineComponent({
     const passengers = ref([]);
     // 分页的三个属性名是固定的
     const pagination = ref({
+      // 数据总数
       total: 0,
+      // 当前页数
       current: 1,
+      // 每页数据条数
       pageSize: 10,
     });
     let loading = ref(false);
@@ -149,6 +154,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      // Axios的GET请求带参数，固定放在params对象里
       axios.get("/member/passenger/query-list", {
         params: {
           page: param.page,
@@ -176,6 +182,8 @@ export default defineComponent({
       });
     };
 
+    // Vue生命周期钩子函数，当页面渲染完成后执行
+    // 所有后端请求统一放在初始化函数中，等待页面渲染完成后执行，防止从页面元素取值但不存在的情况
     onMounted(() => {
       handleQuery({
         page: 1,
