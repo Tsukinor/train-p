@@ -2,15 +2,21 @@ package com.jiawa.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjectUtil;
 import com.jiawa.train.common.context.LoginMemberContext;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Passenger;
+import com.jiawa.train.member.domain.PassengerExample;
 import com.jiawa.train.member.mapper.PassengerMapper;
+import com.jiawa.train.member.req.PassengerQueryReq;
 import com.jiawa.train.member.req.PassengerSaveReq;
+import com.jiawa.train.member.resp.PassengerQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PassengerService {
@@ -28,6 +34,22 @@ public class PassengerService {
         passenger.setCreateTime(now);
         passenger.setUpdateTime(now);
         passengerMapper.insert(passenger);
+
+    }
+    /**
+     * 乘客信息查询
+     *
+     * @param req
+     * @return PassengerQueryResp乘客查询请求结果封装类。注意：开发规范是Controller不使用持久层实体类，所以不能直接返回Passenger对象
+     */
+   public List<PassengerQueryResp> queryList(PassengerQueryReq req){
+       PassengerExample example = new PassengerExample();
+       PassengerExample.Criteria criteria = example.createCriteria();
+       if (ObjectUtil.isNull(req.getMemberId())){
+          criteria.andMemberIdEqualTo(req.getMemberId());
+       }
+       List<Passenger> list = passengerMapper.selectByExample(example);
+       return BeanUtil.copyToList(list, PassengerQueryResp.class);
 
     }
 
