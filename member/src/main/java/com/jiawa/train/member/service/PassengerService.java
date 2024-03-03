@@ -4,7 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jiawa.train.common.context.LoginMemberContext;
+import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Passenger;
 import com.jiawa.train.member.domain.PassengerExample;
@@ -42,15 +44,30 @@ public class PassengerService {
      * @param req
      * @return PassengerQueryResp乘客查询请求结果封装类。注意：开发规范是Controller不使用持久层实体类，所以不能直接返回Passenger对象
      */
-   public List<PassengerQueryResp> queryList(PassengerQueryReq req){
+   public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req){
        PassengerExample example = new PassengerExample();
+
        PassengerExample.Criteria criteria = example.createCriteria();
+
        if (ObjectUtil.isNull(req.getMemberId())){
           criteria.andMemberIdEqualTo(req.getMemberId());
        }
+
+       Log.info("查询页码：{}", req.getStartPage());
+       Log.info("每页条数：{}", req.getPageSize());
        PageHelper.startPage(req.getStartPage(), req.getPageSize());
-       List<Passenger> list = passengerMapper.selectByExample(example);
-       return BeanUtil.copyToList(list, PassengerQueryResp.class);
+       List<Passenger> passengerlist = passengerMapper.selectByExample(example);
+
+       PageInfo<Passenger> pageInfo = new PageInfo<>(passengerlist);
+       Log.info("总行数：{}", pageInfo.getTotal());
+       Log.info("总页数：{}", pageInfo.getPages());
+
+       List<PassengerQueryResp> list = BeanUtil.copyToList(passengerlist, PassengerQueryResp.class);
+        PageResp<PassengerQueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+       return pageResp;
 
     }
 
