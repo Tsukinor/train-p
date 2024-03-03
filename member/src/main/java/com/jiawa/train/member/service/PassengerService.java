@@ -39,7 +39,6 @@ public class PassengerService {
     }
     /**
      * 乘客信息查询
-     *
      * @param req
      * @return PassengerQueryResp乘客查询请求结果封装类。注意：开发规范是Controller不使用持久层实体类，所以不能直接返回Passenger对象
      */
@@ -49,7 +48,7 @@ public class PassengerService {
        if (ObjectUtil.isNull(req.getMemberId())){
           criteria.andMemberIdEqualTo(req.getMemberId());
        }
-       PageHelper.startPage(1,2);
+       PageHelper.startPage(req.getStartPage(), req.getPageSize());
        List<Passenger> list = passengerMapper.selectByExample(example);
        return BeanUtil.copyToList(list, PassengerQueryResp.class);
 
