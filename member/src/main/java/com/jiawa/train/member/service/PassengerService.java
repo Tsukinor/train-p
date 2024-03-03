@@ -47,15 +47,18 @@ public class PassengerService {
    public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req){
        PassengerExample example = new PassengerExample();
 
+       // 查询结果按照id升序排列
+       example.setOrderByClause("id asc");
+
        PassengerExample.Criteria criteria = example.createCriteria();
 
        if (ObjectUtil.isNull(req.getMemberId())){
           criteria.andMemberIdEqualTo(req.getMemberId());
        }
 
-       Log.info("查询页码：{}", req.getStartPage());
-       Log.info("每页条数：{}", req.getPageSize());
-       PageHelper.startPage(req.getStartPage(), req.getPageSize());
+       Log.info("查询页码：{}", req.getPage());
+       Log.info("每页条数：{}", req.getSize());
+       PageHelper.startPage(req.getPage(), req.getSize());
        List<Passenger> passengerlist = passengerMapper.selectByExample(example);
 
        PageInfo<Passenger> pageInfo = new PageInfo<>(passengerlist);
