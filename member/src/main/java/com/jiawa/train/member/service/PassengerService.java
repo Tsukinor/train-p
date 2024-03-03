@@ -32,11 +32,18 @@ public class PassengerService {
 
         DateTime now = new DateTime();
         Passenger passenger = BeanUtil.copyProperties(req,Passenger.class);
-        passenger.setId(SnowUtil.getSnowflakeNextId());
-        passenger.setMemberId(LoginMemberContext.getId());
-        passenger.setCreateTime(now);
-        passenger.setUpdateTime(now);
-        passengerMapper.insert(passenger);
+        //判断是修改还是新增
+        if (ObjectUtil.isNull(passenger.getId())){
+            passenger.setId(SnowUtil.getSnowflakeNextId());
+            passenger.setMemberId(LoginMemberContext.getId());
+            passenger.setCreateTime(now);
+            passenger.setUpdateTime(now);
+            passengerMapper.insert(passenger);
+        }else {
+            passenger.setUpdateTime(now);
+            passengerMapper.updateByPrimaryKey(passenger);
+        }
+
 
     }
     /**
@@ -74,5 +81,8 @@ public class PassengerService {
 
     }
 
+    public void delete(Long id){
+       passengerMapper.deleteByPrimaryKey(id);
+    }
 
 }
