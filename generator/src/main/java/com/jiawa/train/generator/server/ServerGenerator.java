@@ -2,12 +2,14 @@ package com.jiawa.train.generator.server;
 
 
 import com.jiawa.train.generator.util.FreemarkerUtil;
+import freemarker.template.TemplateException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ import java.util.Map;
  **/
 public class ServerGenerator {
 
-    static String serverPath = "[module]/src/main/java/com/jiawa/train/member/service/";
+    static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
 
     static String pomPath = "generator/pom.xml";
 
@@ -41,7 +43,9 @@ public class ServerGenerator {
         System.out.println("servicePath: " + serverPath);
 
         // 读取table节点
+
         Document document = new SAXReader().read("generator/" + generatorPath);
+        // "//"为从根目录下寻找， pom是xml命名空间，configurationFile是节点名，如果要找属性，则是"@"
         Node table = document.selectSingleNode("//table");
         System.out.println(table);
         Node tableName = table.selectSingleNode("@tableName");
@@ -68,8 +72,18 @@ public class ServerGenerator {
         param.put("do_main", do_main);
         System.out.println("组装参数：" + param);
 
-        FreemarkerUtil.initConfig("service.ftl");
-        FreemarkerUtil.generator(serverPath + Domain + "Servcice.java", param);
+        gen(Domain, param,"controller");
+    }
+
+    private static void gen(String Domain, Map<String, Object> param,String target) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig(target +".ftl");
+        String toPath = serverPath + target + "/";
+        new File(toPath).mkdirs();
+        // 目标类名首字符大写
+        String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
+        String fileName = toPath + Domain + Target + ".java";
+        System.out.println("开始生成："+ fileName);
+        FreemarkerUtil.generator(fileName, param);
     }
 
     private static String getGeneratorPath() throws DocumentException {
