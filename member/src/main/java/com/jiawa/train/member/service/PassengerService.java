@@ -28,6 +28,9 @@ public class PassengerService {
     @Resource
     private PassengerMapper passengerMapper;
 
+    public static void main(String[] args) {
+
+    }
     public void save(PassengerSaveReq req){
 
         DateTime now = new DateTime();
