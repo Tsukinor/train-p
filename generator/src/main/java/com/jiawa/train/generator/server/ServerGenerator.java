@@ -21,8 +21,12 @@ import java.util.*;
  * @description: 代码生成器
  **/
 public class ServerGenerator {
+    // 指定vue生成的页面是否只读，若为只读页面则只能查询数据，无法增删改
     static boolean readOnly = false;
 
+    static String vuePath = "admin/src/views/main/";
+
+    // 后端接口、服务、实体类生成路径
     static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
 
     static String pomPath = "generator/pom.xml";
@@ -105,6 +109,14 @@ public class ServerGenerator {
         new File(toPath).mkdirs();
         String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
         String fileName = toPath + Domain + Target + ".java";
+        System.out.println("开始生成：" + fileName);
+        FreemarkerUtil.generator(fileName, param);
+    }
+
+    private static void genVue(String Domain, Map<String, Object> param) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig("vue.ftl");
+        new File(vuePath + module).mkdirs();
+        String fileName = vuePath + module + "/" + Domain + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }
